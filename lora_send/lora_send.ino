@@ -54,7 +54,7 @@ void setup() {
  display.display();*/
  //delay(2000);
 }
-char str[] = "A well regulated Militia, being necessary to the security of a free State, the right of the people to keep and bear Arms, shall not be infringed.\n";
+char str[] = "test message";
 void loop() {
  //Serial.print("Sending packet: ");
  //Serial.println(counter);
@@ -70,11 +70,6 @@ void loop() {
     delay(1000);
   }
 
- /*LoRa.beginPacket() ;
- LoRa.print("We must secure the existence of our people and a future for white children\n") ;
- LoRa.print("Because the beauty of the White Aryan woman must not perish from the earth.\n") ;
- LoRa.endPacket();
- delay(1000);*/
  counter++;
  /*display.clear();
  display.setFont(ArialMT_Plain_16);
