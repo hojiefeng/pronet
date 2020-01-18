@@ -145,7 +145,7 @@ void onMessage(WebsocketsClient& client, WebsocketsMessage message) {
 
   if (message.length() > 0) {
     for (auto& c : clients) {
-      c.send(message.data());
+      c.send(String(WiFi.macAddress()) + " (myself): " + message.data());
     }
     LoRa.beginPacket() ;
     LoRa.print(String(WiFi.macAddress()) + ": " + message.data());
