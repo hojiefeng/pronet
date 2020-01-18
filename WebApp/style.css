@@ -1,25 +1,20 @@
-* {
-	font-family: Helvetica, sans-serif;
+* { font-family: Helvetica, sans-serif; }
+h1 { margin: 0; }
+b {
+	font-family: monospace;
+	font-weight: bolder;
 }
-
-h1{
-	margin: 0;
-}
-
 .footer {
 	display: grid;
 	justify-content: space-around;
 	grid-template-columns: 70vw 30vw;
 	margin-bottom: 10px;
 }
-
-.mtxt,
-.mbtn {
+#mtxt, #mbtn {
 	font-size: 16px;
 	margin-left: 10px;
 	margin-right: 10px;
-}
-
+} 
 #marea {
 	font-family: monospace;
 	width: 90vw;

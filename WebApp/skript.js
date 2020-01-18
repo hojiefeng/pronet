@@ -1,6 +1,12 @@
 const marea = document.getElementById('marea')
+const mtxt = document.getElementById('mtxt')
 
 const msgRecieved = (msg) => { marea.innerHTML = '[' + Date.now() + '] ' + msg + '<br>' + marea.innerHTML }
+const msgSend = () => { 
+	const msg = mtxt.value
+	msgRecieved('<b>You: '+msg+'</b>')
+	mtxt.value = ''
+}
 
 /* 
 
