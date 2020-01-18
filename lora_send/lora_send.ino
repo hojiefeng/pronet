@@ -70,7 +70,6 @@ void loop() {
     delay(1000);
   }
 
- delay(1000);*/
  counter++;
  /*display.clear();
  display.setFont(ArialMT_Plain_16);
