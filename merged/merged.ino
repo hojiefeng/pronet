@@ -37,7 +37,7 @@ String readFile(fs::FS &fs, const char * path) {
   Serial.println("- read from file:");
   return file.readString();
 }
-
+ 
 const char* ssid = "........";
 const char* password = "........";
 
@@ -61,7 +61,6 @@ void handleNotFound() {
   }
   server.send(404, "text/plain", message);
   digitalWrite(led, 0);
-  wsserver.listen(81);
 }
 
 void handleRoot() {
@@ -90,18 +89,6 @@ void setup(void) {
   WiFi.softAP(ssid, password);
   Serial.println("");
 
-  // Wait for connection
-  /* while (WiFi.status() != WL_CONNECTED) {
-     delay(500);
-     Serial.print(".");
-    }
-    Serial.println("");*/
-  // Wait some time to connect to wifi
-  for (int i = 0; i < 15 && WiFi.status() != WL_CONNECTED; i++) {
-    Serial.print(".");
-    delay(1000);
-  }
-
   Serial.print("Connected to ");
   Serial.println(ssid);
   Serial.print("IP address: ");
@@ -127,6 +114,7 @@ void setup(void) {
   server.begin();
   Serial.println("HTTP server started");
 
+  wsserver.listen(81);
 
   tft.initR(INITR_BLACKTAB);      // Init ST7735S chip, black tab
   SPI.begin(5, 19, 27, 18);
@@ -150,26 +138,10 @@ void setup(void) {
 
 int lastpacket;
 int lastdisplay;
+
 void loop(void) {
   server.handleClient();
-
   WebsocketsClient client = wsserver.accept();
-  // Phone is connected to the ESP32
-  while (client.available()) {
-    WebsocketsMessage msg = client.readBlocking();
-    if (msg.length() > 0) {
-      // TODO: Forward msg.data() to LoRa
-      LoRa.beginPacket() ;
-      LoRa.print(msg.data()) ;
-      LoRa.endPacket();
-      Serial.print("Websocket data: ");
-      Serial.println(msg.data());
-    }
-#ifdef DEBUG
-    Serial.print("Message: ");
-    Serial.println(msg.rawData());
-#endif
-  }
 
   int packetSize = LoRa.parsePacket();
   //Serial.println("RECV");
@@ -180,7 +152,9 @@ void loop(void) {
       msg[i] = LoRa.read();
     }
     msg[packetSize] = '\0';
+    client.send(msg);
     Serial.println(msg);
+
     /*while (LoRa.available()) {
         char receivedText = (char)LoRa.read();
         Serial.print(receivedText);
