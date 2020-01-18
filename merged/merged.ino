@@ -40,8 +40,8 @@ String readFile(fs::FS &fs, const char * path) {
   return str;
 }
 
-const char* ssid = "lora1";
-const char* password = "loralora";
+const char* ssid = "........";
+const char* password = "........";
 
 WebServer server(80);
 WebsocketsServer wsserver;
@@ -144,8 +144,10 @@ std::vector<WebsocketsClient> clients;
 void onMessage(WebsocketsClient& client, WebsocketsMessage message) {
 
   if (message.length() > 0) {
-    client.send(String(WiFi.macAddress()) + " (myself) : " + message.data());
-    LoRa.beginPacket() ;  
+    for (auto& c : clients) {
+      c.send(String(WiFi.macAddress()) + " (myself): " + message.data());
+    }
+    LoRa.beginPacket() ;
     LoRa.print(String(WiFi.macAddress()) + ": " + message.data());
     LoRa.endPacket();
   }
