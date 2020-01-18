@@ -31,12 +31,6 @@ WebServer server(80);
 
 const int led = 13;
 
-void handleRoot() {
-  digitalWrite(led, 1);
-  server.send(200, "text/plain", "hello from esp8266!");
-  digitalWrite(led, 0);
-}
-
 void handleNotFound() {
   digitalWrite(led, 1);
   String message = "File Not Found\n\n";
@@ -54,10 +48,22 @@ void handleNotFound() {
   digitalWrite(led, 0);
 }
 
-void handleHTML() {
+void handleRoot() {
   digitalWrite(led, 1);
-  server.send(200, "text/html", readFile(SPIFFS, "/stuff.html"));
-              digitalWrite(led, 0);
+  server.send(200, "text/html", readFile(SPIFFS, "/index.html"));
+  digitalWrite(led, 0);
+}
+
+void handleCSS() {
+  digitalWrite(led, 1);
+  server.send(200, "text/css", readFile(SPIFFS, "/style.css"));
+  digitalWrite(led, 0);
+}
+
+void handleJS() {
+  digitalWrite(led, 1);
+  server.send(200, "text/plain", readFile(SPIFFS, "/skript.js"));
+  digitalWrite(led, 0);
 }
 
 void setup(void) {
@@ -90,11 +96,9 @@ void setup(void) {
 
   server.on("/", handleRoot);
 
-  server.on("/inline", []() {
-    server.send(200, "text/plain", "this works as well");
-  });
+  server.on("/style.css", handleCSS);
 
-  server.on("/html", handleHTML);
+  server.on("/skript.js", handleJS);
 
   server.onNotFound(handleNotFound);
 
