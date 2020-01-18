@@ -35,9 +35,11 @@ String readFile(fs::FS &fs, const char * path) {
   }
 
   Serial.println("- read from file:");
-  return file.readString();
+  auto str = file.readString();
+  file.close();
+  return str;
 }
- 
+
 const char* ssid = "........";
 const char* password = "........";
 
@@ -138,13 +140,38 @@ void setup(void) {
 
 int lastpacket;
 int lastdisplay;
+std::vector<WebsocketsClient> clients;
+void onMessage(WebsocketsClient& client, WebsocketsMessage message) {
+  
+      if (message.length() > 0) {
+        client.send(String(WiFi.macAddress()) + message.data());
+        LoRa.beginPacket() ;
+        LoRa.print(/*String(WiFi.macAddress()) + */message.data());
+        LoRa.endPacket();
+      }
+      Serial.print("Message: ");
+      Serial.println(message.data());
+}
+void handleallclients() {
+  for (auto& client : clients) {
+    /*while (client.available()) {
+      WebsocketsMessage msg = client.readBlocking();
 
+      // TODO: read incoming messages from LoRa and transfer the data to the phone
+      // LoRa.readData()
+      // client.send(whatever_data_is_read_from_lora)
+    }*/
+    client.poll();
+  }
+}
 void loop(void) {
   server.handleClient();
-  WebsocketsClient client = wsserver.accept();
+  if (wsserver.poll()) {
+    WebsocketsClient client = wsserver.accept();
+    clients.push_back(client);
+  }
 
   int packetSize = LoRa.parsePacket();
-  //Serial.println("RECV");
   if (packetSize) {
     lastpacket = millis();
     char* msg = (char*)malloc(packetSize + 1);
@@ -152,37 +179,11 @@ void loop(void) {
       msg[i] = LoRa.read();
     }
     msg[packetSize] = '\0';
-    client.send(msg);
+    for (auto& client : clients) {
+      client.send(msg);
+    }
     Serial.println(msg);
-
-    /*while (LoRa.available()) {
-        char receivedText = (char)LoRa.read();
-        Serial.print(receivedText);
-      }*/
-    int rssi = LoRa.packetRssi();
-    float snr = LoRa.packetSnr();
-    long freqErr = LoRa.packetFrequencyError();
-    tft.fillScreen(ST77XX_BLACK);
-    tft.setCursor(0, 0);
-    tft.setTextColor(ST77XX_WHITE);
-    tft.setTextWrap(true);
-    tft.setTextSize(1);
-    tft.println(msg);
-    tft.printf("RSSI: %d\n", rssi);
-    tft.printf("SNR: %f\n", snr);
-    tft.printf("Err: %ld\n", freqErr);
-    //Serial.println("RECV");
-    //delay(1000);
+    free(msg);
   }
-
-  //tft.fillScreen(ST77XX_BLACK);
-  if (millis() - lastdisplay >= 500) {
-    tft.fillRect(75, 100, 50, 10, ST77XX_BLACK);
-    tft.setCursor(0, 100);
-    tft.setTextColor(ST77XX_WHITE);
-    tft.setTextWrap(true);
-    tft.setTextSize(1);
-    tft.printf("Last Packet: %dms\n", millis() - lastpacket);
-    lastdisplay = millis();
-  }
+  handleallclients();
 }

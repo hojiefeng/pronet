@@ -1,24 +1,28 @@
+
 const marea = document.getElementById('marea')
 const mtxt = document.getElementById('mtxt')
 
-const msgRecieved = (msg) => { marea.innerHTML = '[' + Date.now() + '] ' + msg + '<br>' + marea.innerHTML }
+const msgReceived = (msg) => { marea.innerHTML = '[' + Date.now() + '] ' + msg + '<br>' + marea.innerHTML }
 const msgSend = () => { 
 	const msg = mtxt.value
-	msgRecieved('<b>You: '+msg+'</b>')
+        exampleSocket.send(msg);
+	msgReceived('<b>You: '+msg+'</b>')
 	mtxt.value = ''
 }
 
-/* 
+ 
 
+window.onload = () => {
 //Connect to websocket
-let exampleSocket = new WebSocket("wss://www.example.com/socketserver")
+exampleSocket = new WebSocket("ws://192.168.4.1:81/",['arduino'])
 
 // Sending
-exampleSocket.send("Here's some text that the server is urgently awaiting!")
+//exampleSocket.send("test test")
 
 // Receiving
 exampleSocket.onmessage = function (event) {
-	console.log(event.data);
+	msgReceived(event.data);
 }
-*/
-msgRecieved('Waiting for messages...')
+
+msgReceived('Waiting for messages...')
+}
