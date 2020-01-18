@@ -40,8 +40,8 @@ String readFile(fs::FS &fs, const char * path) {
   return str;
 }
 
-const char* ssid = "........";
-const char* password = "........";
+const char* ssid = "lora1";
+const char* password = "loralora";
 
 WebServer server(80);
 WebsocketsServer wsserver;
@@ -142,15 +142,15 @@ int lastpacket;
 int lastdisplay;
 std::vector<WebsocketsClient> clients;
 void onMessage(WebsocketsClient& client, WebsocketsMessage message) {
-  
-      if (message.length() > 0) {
-        client.send(String(WiFi.macAddress()) + message.data());
-        LoRa.beginPacket() ;
-        LoRa.print(/*String(WiFi.macAddress()) + */message.data());
-        LoRa.endPacket();
-      }
-      Serial.print("Message: ");
-      Serial.println(message.data());
+
+  if (message.length() > 0) {
+    client.send(String(WiFi.macAddress()) + " (myself) : " + message.data());
+    LoRa.beginPacket() ;  
+    LoRa.print(String(WiFi.macAddress()) + ": " + message.data());
+    LoRa.endPacket();
+  }
+  Serial.print("Message: ");
+  Serial.println(message.data());
 }
 void handleallclients() {
   for (auto& client : clients) {
@@ -160,7 +160,7 @@ void handleallclients() {
       // TODO: read incoming messages from LoRa and transfer the data to the phone
       // LoRa.readData()
       // client.send(whatever_data_is_read_from_lora)
-    }*/
+      }*/
     client.poll();
   }
 }
@@ -168,6 +168,7 @@ void loop(void) {
   server.handleClient();
   if (wsserver.poll()) {
     WebsocketsClient client = wsserver.accept();
+    client.onMessage(onMessage);
     clients.push_back(client);
   }
 

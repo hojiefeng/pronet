@@ -6,10 +6,15 @@ const msgReceived = (msg) => { marea.innerHTML = '[' + Date.now() + '] ' + msg +
 const msgSend = () => { 
 	const msg = mtxt.value
         exampleSocket.send(msg);
-	msgReceived('<b>You: '+msg+'</b>')
+//	msgReceived('<b>You: '+msg+'</b>')
 	mtxt.value = ''
 }
 
+/*setInterval(() => {
+if (exampleSocket.readyState === WebSocket.CLOSED) {
+   exampleSocket = new WebSocket("ws://192.168.4.1:81/",['arduino']);
+}
+}, 1000);*/
  
 
 window.onload = () => {
