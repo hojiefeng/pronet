@@ -18,6 +18,11 @@
 #define DI0 26
 #define BAND 433E6 //915E6
 
+#define SSID_NAME "........"
+#define SSID_PASSWD "........"
+#define WEB_SOCKET_PORT 81
+#define WEB_SERVER_PORT 80
+
 Adafruit_ST7735 tft = Adafruit_ST7735(13, 25, 14, 12, 33);
 using namespace websockets;
 /* You only need to format SPIFFS the first time you run a
@@ -40,10 +45,10 @@ String readFile(fs::FS &fs, const char * path) {
   return str;
 }
 
-const char* ssid = "........";
-const char* password = "........";
+const char* ssid = SSID_NAME;
+const char* password = SSID_PASSWD;
 
-WebServer server(80);
+WebServer server(WEB_SERVER_PORT);
 WebsocketsServer wsserver;
 
 const int led = 13;
@@ -116,7 +121,7 @@ void setup(void) {
   server.begin();
   Serial.println("HTTP server started");
 
-  wsserver.listen(81);
+  wsserver.listen(WEB_SOCKET_PORT);
 
   tft.initR(INITR_BLACKTAB);      // Init ST7735S chip, black tab
   SPI.begin(5, 19, 27, 18);
