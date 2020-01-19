@@ -159,21 +159,17 @@ void onMessage(WebsocketsClient& client, WebsocketsMessage message) {
   Serial.print("Message: ");
   Serial.println(message.data());
 }
+
+// handleallclients reads from all sockets without blocking (in contrast to readBlocking)
 void handleallclients() {
   for (auto& client : clients) {
-    /*while (client.available()) {
-      WebsocketsMessage msg = client.readBlocking();
-
-      // TODO: read incoming messages from LoRa and transfer the data to the phone
-      // LoRa.readData()
-      // client.send(whatever_data_is_read_from_lora)
-      }*/
     client.poll();
   }
 }
 void loop(void) {
   server.handleClient();
   if (wsserver.poll()) {
+    // if the web socket server is unable to read from a current client socket, block and wait to accept a connection from another client
     WebsocketsClient client = wsserver.accept();
     client.onMessage(onMessage);
     clients.push_back(client);
@@ -188,7 +184,7 @@ void loop(void) {
     }
     msg[packetSize] = '\0';
     for (auto& client : clients) {
-      client.send(msg);
+      client.send(msg); // send LoRa data to the browser for printing on the web client
     }
     Serial.println(msg);
     free(msg);
