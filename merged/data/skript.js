@@ -19,8 +19,8 @@ if (exampleSocket.readyState === WebSocket.CLOSED) {
 
 window.onload = () => {
 //Connect to websocket
-exampleSocket = new WebSocket("ws://192.168.4.1:81/",['arduino'])
-
+//exampleSocket = new WebSocket("ws://192.168.4.1:81/",['arduino'])
+exampleSocket = new WebSocket("ws://192.168.4.1:81/")
 // Sending
 //exampleSocket.send("test test")
 
