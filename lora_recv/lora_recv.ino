@@ -1,6 +1,10 @@
 /* https://www.alictronix.com/archives/860
 * Sketch uses 155594 bytes (14%) of program storage space. Maximum is 1044464 bytes.
 * Global variables use 11612 bytes (3%) of dynamic memory, leaving 283300 bytes for local variables. Maximum is 294912 bytes.
+*
+*
+* This is the code Jiefeng used in his setup to print the RSSI, SNR, and message of the LoRa signal on a OLED screen.
+*
 */
 #include <SPI.h>
 #include <LoRa.h>
